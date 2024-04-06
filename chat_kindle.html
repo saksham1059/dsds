@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            font-family: 'Whitney', 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* ... other CSS styles ... */
+    </style>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <div class="chat-container" id="chatContainer" style="height: 400px; overflow-y: scroll;"></div>
+    <div class="input-container">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button id="sendButton">Send</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        // Your Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyBAWt0_iZAZijVi1rrKOUjMGYHtyw9HQ64",
+            authDomain: "aaravchat-44e73.firebaseapp.com",
+            projectId: "aaravchat-44e73",
+            storageBucket: "aaravchat-44e73.appspot.com",
+            messagingSenderId: "234190306046",
+            appId: "1:234190306046:web:dcc3e28dbc134dca1003af",
+            measurementId: "G-3GB9TJSLT7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Global references
+        var messageInput = document.getElementById("messageInput");
+        var chatContainer = document.getElementById("chatContainer");
+        var sendButton = document.getElementById("sendButton");
+
+        // Default username for Kindle user
+        var username = "a Kindle user";
+
+        sendButton.onclick = function() {
+            var messageContent = messageInput.value.trim();
+            if (messageContent !== "") {
+                firebase.database().ref("messages").push({
+                    username: username,
+                    content: messageContent
+                });
+                messageInput.value = "";
+            }
+        };
+
+        firebase.database().ref("messages").on("child_added", function(snapshot) {
+            var message = snapshot.val();
+            var messageElement = document.createElement("div");
+
+            messageElement.innerHTML = `<strong>${message.username}:</strong> ${message.content}`;
+            
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+    </script>
+</body>
+</html>
